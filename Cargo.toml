@@ -20,7 +20,11 @@ exclude = [
 travis-ci = { repository = "dalek-cryptography/subtle", branch = "master"}
 
 [features]
-default = ["std", "i128"]
-std = []
+default = ["std", "i128", "mesalock_sgx"]
+std = ["mesalock_sgx"]
 i128 = []
 nightly = []
+mesalock_sgx = ["sgx_tstd"]
+
+[dependencies]
+sgx_tstd = { rev = "v1.0.9", git = "https://github.com/baidu/rust-sgx-sdk.git", optional = true }
