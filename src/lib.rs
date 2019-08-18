@@ -15,12 +15,18 @@
 #![cfg_attr(feature = "nightly", deny(missing_docs))]
 #![doc(html_logo_url = "https://doc.dalek.rs/assets/dalek-logo-clear.png")]
 
+#![cfg_attr(all(target_env = "sgx", target_vendor = "mesalock"), feature(rustc_private))]
+
 //! Note that docs will only build on nightly Rust until
 //! [RFC 1990 stabilizes](https://github.com/rust-lang/rust/issues/44732).
 
-#[cfg(feature = "std")]
+#[cfg(all(feature = "std", target_env = "sgx"))]
 #[macro_use]
 extern crate std;
+
+#[cfg(all(feature = "std", not(target_env = "sgx")))]
+#[macro_use]
+extern crate sgx_tstd as std;
 
 use core::ops::{BitAnd, BitAndAssign, BitOr, BitOrAssign, BitXor, BitXorAssign, Neg, Not};
 
@@ -204,7 +210,7 @@ pub trait ConstantTimeEq {
     ///
     /// * `Choice(1u8)` if `self == other`;
     /// * `Choice(0u8)` if `self != other`.
-    #[inline]
+    //#[inline]
     fn ct_eq(&self, other: &Self) -> Choice;
 }
 
@@ -320,7 +326,7 @@ pub trait ConditionallySelectable: Copy {
     /// assert_eq!(z, y);
     /// # }
     /// ```
-    #[inline]
+    //#[inline]
     fn conditional_select(a: &Self, b: &Self, choice: Choice) -> Self;
 
     /// Conditionally assign `other` to `self`, according to `choice`.
@@ -470,7 +476,7 @@ pub trait ConditionallyNegatable {
     /// unchanged.
     ///
     /// This function should execute in constant time.
-    #[inline]
+    //#[inline]
     fn conditional_negate(&mut self, choice: Choice);
 }
 
